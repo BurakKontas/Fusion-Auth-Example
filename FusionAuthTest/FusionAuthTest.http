@@ -1,0 +1,6 @@
+@FusionAuthTest_HostAddress = http://localhost:5177
+
+GET {{FusionAuthTest_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
