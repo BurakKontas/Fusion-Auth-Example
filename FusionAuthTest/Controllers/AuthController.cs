@@ -224,7 +224,20 @@ namespace FusionAuthTest.Controllers
 
             if (!response.WasSuccessful()) throw new ArgumentException(response.exception.Message ?? "");
         }
+
+        [HttpPost("/verify-registration-with-code")]
+        public void VerifyEmailWithCode([FromBody] EmailVerificationWithCodeRequest request)
+        {
+            var verificationRequest = new VerifyRegistrationRequest()
+                .with(vr => vr.verificationId = request.VerificationId)
+                .with(vr => vr.oneTimeCode = request.OneTimeCode);
+
+            var response = client.VerifyUserRegistration(verificationRequest);
+
+            if (!response.WasSuccessful()) throw new ArgumentException(response.exception.Message ?? "");
+        }
     }
 }
 
 public record EmailVerifyRequest(string VerificationId);
+public record EmailVerificationWithCodeRequest(string? OneTimeCode, string? VerificationId);
