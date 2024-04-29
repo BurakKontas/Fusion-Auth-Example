@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 
 var client = new FusionAuthSyncClient("L3iSgPrg3VpyXUTZq6lR9nEVhHK2NvNvN8XoVSgm5th1Q7tQilHwF7Z7", "http://localhost:9011");
+//var client = new FusionAuthSyncClient("LE0CRUaA4oadkI8zuqx3oN9utJO1l6f3AH8Jfs-_JIYP5Dt_VFabftcD", "https://auth.colyakdiyabet.com.tr");
 
 builder.Services.AddSingleton(client);
 

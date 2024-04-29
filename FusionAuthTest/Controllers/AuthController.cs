@@ -33,6 +33,7 @@ namespace FusionAuthTest.Controllers
 
         private readonly ILogger<AuthController> _logger = logger;
         private readonly Guid _applicationId = new("ac3c2bbc-45f6-4daf-bd55-86529b296faa");
+        //private readonly Guid _applicationId = new("6cc9f1e3-7cc2-401c-86cd-ee6c74e60594");
 
 
         [HttpPost("/register")]
@@ -62,6 +63,8 @@ namespace FusionAuthTest.Controllers
                 .with(rr => rr.skipVerification = false);
 
             var registerResponse = client.Register(null, registrationRequest);
+
+            Console.WriteLine(registerResponse.successResponse.registrationVerificationId); // return this if you want to manually verify the email
 
             if (!registerResponse.WasSuccessful()) throw new Exception("User not created");
 
@@ -120,7 +123,7 @@ namespace FusionAuthTest.Controllers
             if (!response.WasSuccessful()) throw new ArgumentException(response.exception.Message ?? "");
         }
 
-        [HttpPost("/verify-email")]
+        [HttpPost("/resend-email-verification")]
         public void VerifyEmail([FromBody] EmailVerificationRequest request)
         {
             var response = client.ResendEmailVerification(request.Email);
@@ -211,8 +214,17 @@ namespace FusionAuthTest.Controllers
             if (!response.WasSuccessful()) throw new ArgumentException(response.exception.Message ?? "");
         }
 
-        // OAuth IdP login URL:	http://localhost:9011/oauth2/authorize?client_id=ac3c2bbc-45f6-4daf-bd55-86529b296faa&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A9011
-        // Registration URL: http://localhost:9011/oauth2/register?client_id=ac3c2bbc-45f6-4daf-bd55-86529b296faa&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A9011
-        // Logout URL : http://localhost:9011/oauth2/logout?client_id=ac3c2bbc-45f6-4daf-bd55-86529b296faa
+        [HttpPost("/verify-registration")]
+        public void VerifyEmail([FromBody] EmailVerifyRequest request)
+        {
+            var verificationRequest = new VerifyRegistrationRequest()
+                .with(vr => vr.verificationId = request.VerificationId);
+
+            var response = client.VerifyUserRegistration(verificationRequest);
+
+            if (!response.WasSuccessful()) throw new ArgumentException(response.exception.Message ?? "");
+        }
     }
 }
+
+public record EmailVerifyRequest(string VerificationId);
