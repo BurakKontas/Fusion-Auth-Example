@@ -33,11 +33,9 @@ namespace FusionAuthTest.Controllers
 
         private readonly ILogger<AuthController> _logger = logger;
         private readonly Guid _applicationId = new("ac3c2bbc-45f6-4daf-bd55-86529b296faa");
-        //private readonly Guid _applicationId = new("6cc9f1e3-7cc2-401c-86cd-ee6c74e60594");
-
 
         [HttpPost("/register")]
-        public void Register([FromBody] RegisterRequest request)
+        public string Register([FromBody] RegisterRequest request)
         {
             var response = client.RetrieveUserByEmail(request.Email);
 
@@ -67,6 +65,8 @@ namespace FusionAuthTest.Controllers
             Console.WriteLine(registerResponse.successResponse.registrationVerificationId); // return this if you want to manually verify the email
 
             if (!registerResponse.WasSuccessful()) throw new Exception("User not created");
+
+            return registerResponse.successResponse.registrationVerificationId;
 
         }
 
@@ -235,6 +235,13 @@ namespace FusionAuthTest.Controllers
             var response = client.VerifyUserRegistration(verificationRequest);
 
             if (!response.WasSuccessful()) throw new ArgumentException(response.exception.Message ?? "");
+        }
+
+        [HttpGet("/webhook")]
+        public void Webhook()
+        {
+            var httpRequest = HttpContext.Request;
+            Console.WriteLine("");
         }
     }
 }
